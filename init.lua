@@ -222,14 +222,6 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_bottom, {
 }), moreprops))
 end
 
-minetest.register_craft({
-	output = "hiking:pole_bottom",
-	recipe = {
-		{"default:stick",},
-		{"default:stick",},
-	}
-})
-
 local function mk_hiking_pole_coloured(colour)
 	mk_hiking_pole(colour.."_pole", "Pole sign "..colour, "hiking_pole_sign_top_"..colour..".png", {}, "hiking_pole_sign_"..colour..".png")
 	minetest.register_craft({
@@ -267,7 +259,20 @@ local function mk_hiking_pole_illuminated_coloured(colour)
 end
 
 mk_hiking_pole("pole", "Pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png")
+minetest.register_craft({
+	output = "hiking:pole_bottom",
+	recipe = {
+		{"default:stick",},
+		{"default:stick",},
+	}
+})
+
 mk_hiking_pole("illuminated_pole", "Illuminated pole sign", "hiking_illuminated_pole_sign_bottom_.png", illuminated_props, "hiking_illuminated_pole_sign.png")
+minetest.register_craft({
+	output = "hiking:illuminated_pole_bottom",
+	type = "shapeless",
+	recipe = { "hiking:pole_bottom", "default:torch" }
+})
 for i, colour in ipairs(colour_list) do
 	mk_hiking_pole_coloured(colour)
 	mk_hiking_pole_illuminated_coloured(colour)
