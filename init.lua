@@ -371,8 +371,7 @@ minetest.register_craft({
 	}
 })
 
--- TODO: New inventory image:
-mk_tall_hiking_pole("tall_pole", "Tall pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png", 3)
+mk_tall_hiking_pole("tall_pole", "Tall pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_tall_pole_sign.png", 3)
 minetest.register_craft({
 	output = "hiking:tall_pole_bottom",
 	recipe = {
@@ -382,7 +381,7 @@ minetest.register_craft({
 	}
 })
 
-mk_tall_hiking_pole("very_tall_pole", "Very tall pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png", 4)
+mk_tall_hiking_pole("very_tall_pole", "Very tall pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_very_tall_pole_sign.png", 4)
 minetest.register_craft({
 	output = "hiking:very_tall_pole_bottom",
 	recipe = {
@@ -391,7 +390,7 @@ minetest.register_craft({
 	}
 })
 
-mk_tall_hiking_pole("infinite_pole", "Infinite pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png", 1024)
+mk_tall_hiking_pole("infinite_pole", "Infinite pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_infinite_pole_sign.png", 1024)
 
 mk_hiking_pole("illuminated_pole", "Illuminated pole sign", "hiking_illuminated_pole_sign_bottom_.png", illuminated_props, "hiking_illuminated_pole_sign.png")
 minetest.register_craft({
