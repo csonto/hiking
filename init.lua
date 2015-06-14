@@ -173,6 +173,9 @@ local hiking_pole_common = {
 local hiking_pole_bottom = merge(hiking_pole_common, {
 	 buildable_to = true,
 })
+local hiking_pole_middle = merge(hiking_pole_common, {
+	 buildable_to = false,
+})
 local hiking_pole_top = merge(hiking_pole_common, {
 	 buildable_to = false,
 })
@@ -182,7 +185,6 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 	-- TODO: this should be always on ground
 	description = name.." (bottom)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", },
-	-- TODO: Add images:
 	inventory_image = image,
 	wield_image = image,
 
@@ -200,7 +202,7 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 
 	after_destruct = function(pos, _)
 		local p = {x=pos.x, y=pos.y+1, z=pos.z}
-		if( minetest.env:get_node(p).name == "hiking:"..id.."_top" ) then
+		if ( minetest.env:get_node(p).name == "hiking:"..id.."_top" ) then
 			minetest.env:remove_node(p)
 		end
 	end,
@@ -215,8 +217,110 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_bottom, {
 
 	on_dig = function(pos, _, _)
 		local p = {x=pos.x, y=pos.y-1, z=pos.z}
-		if( minetest.env:get_node(p).name == "hiking:"..id.."_bottom" ) then
+		if ( minetest.env:get_node(p).name == "hiking:"..id.."_bottom" ) then
 			minetest.env:remove_node(p)
+		end
+        end,
+}), moreprops))
+end
+
+local function mk_tall_hiking_pole(id, name, top_face, moreprops, image, height)
+local h = math.max(height, 2)
+minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom, {
+	-- TODO: this should be always on ground
+	description = name.." (bottom)",
+	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", },
+	inventory_image = image,
+	wield_image = image,
+
+	after_place_node = function(pos, placer, itemstack)
+		local node = minetest.env:get_node(pos)
+		local i
+		local p
+		for i = 1, h-1 do
+			p = {x=pos.x, y=pos.y+i, z=pos.z}
+			if not minetest.registered_nodes[minetest.env:get_node(p).name].buildable_to  then
+				minetest.env:remove_node(pos)
+				return true
+			end
+		end
+		for i = 1, h-2 do
+			p = {x=pos.x, y=pos.y+i, z=pos.z}
+			node.name = "hiking:"..id.."_middle"
+			if minetest.registered_nodes[minetest.env:get_node(p).name].buildable_to  then
+				minetest.env:set_node(p, node)
+			else
+				minetest.env:remove_node(pos)
+				return true
+			end
+		end
+		p = {x=pos.x, y=pos.y+h-1, z=pos.z}
+		node.name = "hiking:"..id.."_top"
+		if minetest.registered_nodes[minetest.env:get_node(p).name].buildable_to  then
+			minetest.env:set_node(p, node)
+		else
+			minetest.env:remove_node(pos)
+			return true
+		end
+	end,
+
+	after_destruct = function(pos, _)
+		local i
+		local p
+		for i = 1, h-1 do
+			p = {x=pos.x, y=pos.y+i, z=pos.z}
+			if ( minetest.env:get_node(p).name == "hiking:"..id.."_top" or minetest.env:get_node(p).name == "hiking:"..id.."_middle" ) then
+				minetest.env:remove_node(p)
+			else
+				return
+			end
+		end
+	end,
+
+}), moreprops))
+
+minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle, {
+	-- TODO: one should not build on top of this
+	-- TODO: should be always on top of pole_bottom
+	description = name.." (middle)",
+	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", },
+
+	on_dig = function(pos, _, _)
+		local i
+		local p
+		for i = 1, h-2 do
+			p = {x=pos.x, y=pos.y-i, z=pos.z}
+			local n = minetest.env:get_node(p).name
+			if ( n == "hiking:"..id.."_bottom" ) then
+				minetest.env:remove_node(p)
+				return
+			elseif not ( n == "hiking:"..id.."_middle" ) then
+				-- TODO: ERROR!
+				return
+			end
+		end
+        end,
+}), moreprops))
+
+minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_bottom, {
+	-- TODO: one should not build on top of this
+	-- TODO: should be always on top of pole_bottom
+	description = name.." (top)",
+	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", top_face, top_face, top_face, top_face, },
+
+	on_dig = function(pos, _, _)
+		local i
+		local p
+		for i = 1, h-1 do
+			p = {x=pos.x, y=pos.y-i, z=pos.z}
+			local n = minetest.env:get_node(p).name
+			if ( n == "hiking:"..id.."_bottom" ) then
+				minetest.env:remove_node(p)
+				return
+			elseif not ( n == "hiking:"..id.."_middle" ) then
+				-- TODO: ERROR!
+				return
+			end
 		end
         end,
 }), moreprops))
@@ -267,12 +371,35 @@ minetest.register_craft({
 	}
 })
 
+-- TODO: New inventory image:
+mk_tall_hiking_pole("tall_pole", "Tall pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png", 3)
+minetest.register_craft({
+	output = "hiking:tall_pole_bottom",
+	recipe = {
+		{"default:stick",},
+		{"default:stick",},
+		{"default:stick",},
+	}
+})
+
+mk_tall_hiking_pole("very_tall_pole", "Very tall pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png", 4)
+minetest.register_craft({
+	output = "hiking:very_tall_pole_bottom",
+	recipe = {
+		{"default:stick",},
+		{"hiking:tall_pole_bottom",},
+	}
+})
+
+mk_tall_hiking_pole("infinite_pole", "Infinite pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_pole_sign.png", 1024)
+
 mk_hiking_pole("illuminated_pole", "Illuminated pole sign", "hiking_illuminated_pole_sign_bottom_.png", illuminated_props, "hiking_illuminated_pole_sign.png")
 minetest.register_craft({
 	output = "hiking:illuminated_pole_bottom",
 	type = "shapeless",
 	recipe = { "hiking:pole_bottom", "default:torch" }
 })
+
 for i, colour in ipairs(colour_list) do
 	mk_hiking_pole_coloured(colour)
 	mk_hiking_pole_illuminated_coloured(colour)
