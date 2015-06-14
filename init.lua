@@ -1,4 +1,17 @@
-minetest.register_alias("hiking_red_sign", "hiking:red_sign")
+local function merge(a, b)
+	local c = {}
+	for k, v in pairs(a) do
+		c[k] = v
+	end
+	for k, v in pairs(b) do
+		c[k] = v
+	end
+	return c
+end
+
+function firstToUpper(str)
+    return (str:gsub("^%l", string.upper))
+end
 
 local basic_properties = {
 	drawtype = "nodebox",
@@ -37,101 +50,100 @@ local basic_properties = {
 	end,
 }
 
-local function merge(a, b)
-	local c = {}
-	for k, v in pairs(a) do
-		c[k] = v
-	end
-	for k, v in pairs(b) do
-		c[k] = v
-	end
-	return c
-end
-
 local illuminated_properties = merge(basic_properties, {
 	light_source = 3
 })
 
-minetest.register_node("hiking:red_sign", merge(basic_properties, {
-	description = "Red hiking sign",
-	tiles = {"hiking_red_sign.png"},
-	inventory_image = "hiking_red_sign.png",
-	wield_image = "hiking_red_sign.png",
+local colour_list = { "red", "blue", "green", "yellow", }
+
+local i
+local colour
+
+for i, colour in ipairs(colour_list) do
+
+minetest.register_alias("hiking_"..colour.."_sign", "hiking:"..colour.."_sign")
+
+minetest.register_node("hiking:"..colour.."_sign", merge(basic_properties, {
+	description = firstToUpper(colour).." hiking sign",
+	tiles = {"hiking_"..colour.."_sign.png"},
+	inventory_image = "hiking_"..colour.."_sign.png",
+	wield_image = "hiking_"..colour.."_sign.png",
 }))
 
-minetest.register_node("hiking:illuminated_red_sign", merge(illuminated_properties, {
-	description = "Illuminated red hiking sign",
-	tiles = {"hiking_red_sign.png"},
-	inventory_image = "hiking_illuminated_red_sign.png",
-	wield_image = "hiking_illuminated_red_sign.png"
+minetest.register_node("hiking:illuminated_"..colour.."_sign", merge(illuminated_properties, {
+	description = "Illuminated "..colour.." hiking sign",
+	tiles = {"hiking_"..colour.."_sign.png"},
+	inventory_image = "hiking_illuminated_"..colour.."_sign.png",
+	wield_image = "hiking_illuminated_"..colour.."_sign.png"
 }))
 
-minetest.register_node("hiking:red_arrow_right", merge(basic_properties, {
-	description = "Red right arrow sign",
-	tiles = {"hiking_red_arrow_right.png"},
-	inventory_image = "hiking_red_arrow_right.png",
-	wield_image = "hiking_red_arrow_right.png"
+minetest.register_node("hiking:"..colour.."_arrow_right", merge(basic_properties, {
+	description = firstToUpper(colour).." right arrow sign",
+	tiles = {"hiking_"..colour.."_arrow_right.png"},
+	inventory_image = "hiking_"..colour.."_arrow_right.png",
+	wield_image = "hiking_"..colour.."_arrow_right.png"
 }))
 
-minetest.register_node("hiking:illuminated_red_arrow_right", merge(illuminated_properties, {
-	description = "Illuminated red right arrow sign",
-	tiles = {"hiking_red_arrow_right.png"},
-	inventory_image = "hiking_illuminated_red_arrow_right.png",
-	wield_image = "hiking_illuminated_red_arrow_right.png"
+minetest.register_node("hiking:illuminated_"..colour.."_arrow_right", merge(illuminated_properties, {
+	description = "Illuminated "..colour.." right arrow sign",
+	tiles = {"hiking_"..colour.."_arrow_right.png"},
+	inventory_image = "hiking_illuminated_"..colour.."_arrow_right.png",
+	wield_image = "hiking_illuminated_"..colour.."_arrow_right.png"
 }))
 
-minetest.register_node("hiking:red_arrow_left", merge(basic_properties, {
-	description = "Red left arrow sign",
-	tiles = {"hiking_red_arrow_left.png"},
-	inventory_image = "hiking_red_arrow_left.png",
-	wield_image = "hiking_red_arrow_left.png",
+minetest.register_node("hiking:"..colour.."_arrow_left", merge(basic_properties, {
+	description = firstToUpper(colour).." left arrow sign",
+	tiles = {"hiking_"..colour.."_arrow_left.png"},
+	inventory_image = "hiking_"..colour.."_arrow_left.png",
+	wield_image = "hiking_"..colour.."_arrow_left.png",
 }))
 
-minetest.register_node("hiking:illuminated_red_arrow_left", merge(illuminated_properties, {
-	description = "Illuminated red left arrow sign",
-	tiles = {"hiking_red_arrow_left.png"},
-	inventory_image = "hiking_illuminated_red_arrow_left.png",
-	wield_image = "hiking_illuminated_red_arrow_left.png",
+minetest.register_node("hiking:illuminated_"..colour.."_arrow_left", merge(illuminated_properties, {
+	description = "Illuminated "..colour.." left arrow sign",
+	tiles = {"hiking_"..colour.."_arrow_left.png"},
+	inventory_image = "hiking_illuminated_"..colour.."_arrow_left.png",
+	wield_image = "hiking_illuminated_"..colour.."_arrow_left.png",
 }))
 
 minetest.register_craft({
-	output = 'hiking:red_sign',
+	output = "hiking:"..colour.."_sign",
 	recipe = {
-		{'dye:white'},
-		{'dye:red'},
-		{'dye:white'}
+		{"dye:white"},
+		{"dye:"..colour},
+		{"dye:white"}
 	}
 })
 
 minetest.register_craft({
-	output = 'hiking:red_arrow_right',
+	output = "hiking:"..colour.."_arrow_right",
 	recipe = {
-		{'hiking:red_sign','dye:red'}
+		{"hiking:"..colour.."_sign","dye:"..colour}
 	}
 })
 
 minetest.register_craft({
-	output = 'hiking:red_arrow_left',
+	output = "hiking:"..colour.."_arrow_left",
 	recipe = {
-		{'dye:red','hiking:red_sign'}
+		{"dye:"..colour,"hiking:"..colour.."_sign"}
 	}
 })
 
 minetest.register_craft({
-	output = 'hiking:illuminated_red_sign',
-        type = 'shapeless',
-	recipe = { 'default:torch', 'hiking:red_sign' }
+	output = "hiking:illuminated_"..colour.."_sign",
+        type = "shapeless",
+	recipe = { "default:torch", "hiking:"..colour.."_sign" }
 })
 
 minetest.register_craft({
-	output = 'hiking:illuminated_red_arrow_left',
-        type = 'shapeless',
-	recipe = { 'default:torch', 'hiking:red_arrow_left' }
+	output = "hiking:illuminated_"..colour.."_arrow_left",
+        type = "shapeless",
+	recipe = { "default:torch", "hiking:"..colour.."_arrow_left" }
 })
 
 minetest.register_craft({
-	output = 'hiking:illuminated_red_arrow_right',
-        type = 'shapeless',
-	recipe = { 'default:torch', 'hiking:red_arrow_right' }
+	output = "hiking:illuminated_"..colour.."_arrow_right",
+        type = "shapeless",
+	recipe = { "default:torch", "hiking:"..colour.."_arrow_right" }
 })
 
+end
