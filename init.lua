@@ -390,6 +390,8 @@ minetest.register_craft({
 	}
 })
 
+-- TODO: not full height is built
+-- TODO: not everything gets removed on digging
 mk_tall_hiking_pole("infinite_pole", "Infinite pole sign", "hiking_pole_sign_bottom_.png", {}, "hiking_infinite_pole_sign.png", 1024)
 
 mk_hiking_pole("illuminated_pole", "Illuminated pole sign", "hiking_illuminated_pole_sign_bottom_.png", illuminated_props, "hiking_illuminated_pole_sign.png")
