@@ -26,7 +26,7 @@ local basic_properties = {
 		wall_bottom = {-0.4375, -0.5, -0.3125, 0.4375, -0.4375, 0.3125},
 		wall_side   = {-0.5, -0.3125, -0.4375, -0.4375, 0.3125, 0.4375},
 	},
-	groups = {snappy=1}, --2,dig_immediate=2,attached_node=1},
+	groups = {snappy=1, oddly_breakable_by_hand=2, attached_node=1},
 	legacy_wallmounted = true,
 	--sounds = default.node_sound_defaults(),
 	on_construct = function(pos)
@@ -133,13 +133,6 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "hiking:"..colour.."_arrow_left",
-	recipe = {
-		{"dye:"..colour,"hiking:"..colour.."_sign"}
-	}
-})
-
-minetest.register_craft({
 	output = "hiking:illuminated_"..colour.."_sign",
         type = "shapeless",
 	recipe = { "default:torch", "hiking:"..colour.."_sign" }
@@ -160,7 +153,6 @@ minetest.register_craft({
 end
 
 local hiking_pole_common = {
-	groups = {snappy=1, oddly_breakable_by_hand=2, },
 	--sounds = default.node_sound_stone_defaults(),
 	paramtype = "light",
 	sunlight_propagates = true,
@@ -172,12 +164,15 @@ local hiking_pole_common = {
 }
 local hiking_pole_bottom = merge(hiking_pole_common, {
 	 buildable_to = true,
+	 groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=0},
 })
 local hiking_pole_middle = merge(hiking_pole_common, {
 	 buildable_to = false,
+	 groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
 })
 local hiking_pole_top = merge(hiking_pole_common, {
 	 buildable_to = false,
+	 groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
 })
 
 local function mk_hiking_pole(id, name, top_face, moreprops, image)
@@ -209,12 +204,12 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 
 }), moreprops))
 
-minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_bottom, {
+minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 	-- TODO: one should not build on top of this
 	-- TODO: should be always on top of pole_bottom
 	description = name.." (top)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", top_face, top_face, top_face, top_face, },
-
+	
 	on_dig = function(pos, _, _)
 		local p = {x=pos.x, y=pos.y-1, z=pos.z}
 		if ( minetest.env:get_node(p).name == "hiking:"..id.."_bottom" ) then
@@ -302,12 +297,11 @@ minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle,
         end,
 }), moreprops))
 
-minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_bottom, {
+minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 	-- TODO: one should not build on top of this
 	-- TODO: should be always on top of pole_bottom
 	description = name.." (top)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", top_face, top_face, top_face, top_face, },
-
 	on_dig = function(pos, _, _)
 		local i
 		local p
