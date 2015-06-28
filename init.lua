@@ -10,7 +10,7 @@ local function merge(a, b)
 end
 
 function firstToUpper(str)
-    return (str:gsub("^%l", string.upper))
+	return (str:gsub("^%l", string.upper))
 end
 
 local basic_properties = {
@@ -134,19 +134,19 @@ minetest.register_craft({
 
 minetest.register_craft({
 	output = "hiking:illuminated_"..colour.."_sign",
-        type = "shapeless",
+	type = "shapeless",
 	recipe = { "default:torch", "hiking:"..colour.."_sign" }
 })
 
 minetest.register_craft({
 	output = "hiking:illuminated_"..colour.."_arrow_left",
-        type = "shapeless",
+	type = "shapeless",
 	recipe = { "default:torch", "hiking:"..colour.."_arrow_left" }
 })
 
 minetest.register_craft({
 	output = "hiking:illuminated_"..colour.."_arrow_right",
-        type = "shapeless",
+	type = "shapeless",
 	recipe = { "default:torch", "hiking:"..colour.."_arrow_right" }
 })
 
@@ -163,16 +163,16 @@ local hiking_pole_common = {
 	},
 }
 local hiking_pole_bottom = merge(hiking_pole_common, {
-	 buildable_to = true,
-	 groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=0},
+	buildable_to = true,
+	groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=0},
 })
 local hiking_pole_middle = merge(hiking_pole_common, {
-	 buildable_to = false,
-	 groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
+	buildable_to = false,
+	groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
 })
 local hiking_pole_top = merge(hiking_pole_common, {
-	 buildable_to = false,
-	 groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
+	buildable_to = false,
+	groups = {snappy=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
 })
 
 local function mk_hiking_pole(id, name, top_face, moreprops, image)
@@ -212,14 +212,14 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 	
 	on_dig = function(pos, _, digger)
 		local p = {x=pos.x, y=pos.y-1, z=pos.z}
-                local n = minetest.env:get_node(p)
-                local nn = n.name
+		local n = minetest.env:get_node(p)
+		local nn = n.name
 		if ( nn == "hiking:"..id.."_bottom" ) then
 			minetest.node_dig(p, n, digger)
 		else
 			minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
 		end
-        end,
+	end,
 }), moreprops))
 end
 
@@ -291,7 +291,7 @@ minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle,
 		local nn
 		for i = 1, h-2 do
 			p = {x=pos.x, y=pos.y-i, z=pos.z}
-                	n = minetest.env:get_node(p)
+			n = minetest.env:get_node(p)
 			nn = n.name
 			if ( nn == "hiking:"..id.."_bottom" ) then
 				minetest.node_dig(p, n, digger)
@@ -301,7 +301,7 @@ minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle,
 				return
 			end
 		end
-        end,
+	end,
 }), moreprops))
 
 minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
@@ -316,7 +316,7 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 		local nn
 		for i = 1, h-1 do
 			p = {x=pos.x, y=pos.y-i, z=pos.z}
-                	n = minetest.env:get_node(p)
+			n = minetest.env:get_node(p)
 			nn = n.name
 			if ( nn == "hiking:"..id.."_bottom" ) then
 				minetest.node_dig(p, n, digger)
@@ -326,7 +326,7 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 				return
 			end
 		end
-        end,
+	end,
 }), moreprops))
 end
 
@@ -342,7 +342,7 @@ local function mk_hiking_pole_coloured(colour)
 	})
 	minetest.register_craft({
 		output = "hiking:"..colour.."_pole_bottom",
-        	type = "shapeless",
+		type = "shapeless",
 		recipe = { "hiking:pole_bottom", "hiking:"..colour.."_sign" }
 	})
 end
@@ -351,17 +351,17 @@ local function mk_hiking_pole_illuminated_coloured(colour)
 	mk_hiking_pole("illuminated_"..colour.."_pole", "Illuminated pole sign "..colour, "hiking_pole_sign_top_"..colour..".png", illuminated_props, "hiking_illuminated_pole_sign_"..colour..".png")
 	minetest.register_craft({
 		output = "hiking:illuminated_"..colour.."_pole_bottom",
-        	type = "shapeless",
+		type = "shapeless",
 		recipe = { "default:torch", "hiking:"..colour.."_pole_bottom" }
 	})
 	minetest.register_craft({
 		output = "hiking:illuminated_"..colour.."_pole_bottom",
-        	type = "shapeless",
+		type = "shapeless",
 		recipe = { "hiking:pole_bottom", "hiking:illuminated_"..colour.."_sign" }
 	})
 	minetest.register_craft({
 		output = "hiking:illuminated_"..colour.."_pole_bottom",
-        	type = "shapeless",
+		type = "shapeless",
 		recipe = { "hiking:illuminated_pole_bottom", "hiking:"..colour.."_sign" }
 	})
 end
