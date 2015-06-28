@@ -176,7 +176,9 @@ local hiking_pole_top = merge(hiking_pole_common, {
 })
 
 local function mk_hiking_pole(id, name, top_face, moreprops, image)
-minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom, {
+local ntop = "hiking:"..id.."_top"
+local nbottom = "hiking:"..id.."_bottom"
+minetest.register_node(nbottom, merge(merge(hiking_pole_bottom, {
 	-- TODO: this should be always on ground
 	description = name.." (bottom)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", },
@@ -186,7 +188,7 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 	after_place_node = function(pos, placer, itemstack)
 		local node = minetest.env:get_node(pos)
 		local p = {x=pos.x, y=pos.y+1, z=pos.z}
-		node.name = "hiking:"..id.."_top"
+		node.name = ntop
 		if minetest.registered_nodes[minetest.env:get_node(p).name].buildable_to  then
 			minetest.env:set_node(p, node)
 		else
@@ -197,14 +199,14 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 
 	after_destruct = function(pos, _)
 		local p = {x=pos.x, y=pos.y+1, z=pos.z}
-		if ( minetest.env:get_node(p).name == "hiking:"..id.."_top" ) then
+		if ( minetest.env:get_node(p).name == ntop ) then
 			minetest.env:remove_node(p)
 		end
 	end,
 
 }), moreprops))
 
-minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
+minetest.register_node(ntop, merge(merge(hiking_pole_top, {
 	-- TODO: one should not build on top of this
 	-- TODO: should be always on top of pole_bottom
 	description = name.." (top)",
@@ -214,7 +216,7 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 		local p = {x=pos.x, y=pos.y-1, z=pos.z}
 		local n = minetest.env:get_node(p)
 		local nn = n.name
-		if ( nn == "hiking:"..id.."_bottom" ) then
+		if ( nn == nbottom ) then
 			minetest.node_dig(p, n, digger)
 		else
 			minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
@@ -225,7 +227,10 @@ end
 
 local function mk_tall_hiking_pole(id, name, top_face, moreprops, image, height)
 local h = math.max(height, 2)
-minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom, {
+local ntop = "hiking:"..id.."_top"
+local nmiddle = "hiking:"..id.."_middle"
+local nbottom = "hiking:"..id.."_bottom"
+minetest.register_node(nbottom, merge(merge(hiking_pole_bottom, {
 	-- TODO: this should be always on ground
 	description = name.." (bottom)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", },
@@ -245,7 +250,7 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 		end
 		for i = 1, h-2 do
 			p = {x=pos.x, y=pos.y+i, z=pos.z}
-			node.name = "hiking:"..id.."_middle"
+			node.name = nmiddle
 			if minetest.registered_nodes[minetest.env:get_node(p).name].buildable_to  then
 				minetest.env:set_node(p, node)
 			else
@@ -254,7 +259,7 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 			end
 		end
 		p = {x=pos.x, y=pos.y+h-1, z=pos.z}
-		node.name = "hiking:"..id.."_top"
+		node.name = ntop
 		if minetest.registered_nodes[minetest.env:get_node(p).name].buildable_to  then
 			minetest.env:set_node(p, node)
 		else
@@ -266,9 +271,11 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 	after_destruct = function(pos, _)
 		local i
 		local p
+		local nn
 		for i = 1, h-1 do
 			p = {x=pos.x, y=pos.y+i, z=pos.z}
-			if ( minetest.env:get_node(p).name == "hiking:"..id.."_top" or minetest.env:get_node(p).name == "hiking:"..id.."_middle" ) then
+			nn = minetest.env:get_node(p).name
+			if ( nn == ntop or nn == nmiddle ) then
 				minetest.env:remove_node(p)
 			else
 				return
@@ -278,7 +285,7 @@ minetest.register_node("hiking:"..id.."_bottom", merge(merge(hiking_pole_bottom,
 
 }), moreprops))
 
-minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle, {
+minetest.register_node(nmiddle, merge(merge(hiking_pole_middle, {
 	-- TODO: one should not build on top of this
 	-- TODO: should be always on top of pole_bottom
 	description = name.." (middle)",
@@ -293,10 +300,10 @@ minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle,
 			p = {x=pos.x, y=pos.y-i, z=pos.z}
 			n = minetest.env:get_node(p)
 			nn = n.name
-			if ( nn == "hiking:"..id.."_bottom" ) then
+			if ( nn == nbottom ) then
 				minetest.node_dig(p, n, digger)
 				return
-			elseif not ( nn == "hiking:"..id.."_middle" ) then
+			elseif not ( nn == nmiddle ) then
 				minetest.log('error', "WARNING: middle of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
 				return
 			end
@@ -304,7 +311,7 @@ minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle,
 	end,
 }), moreprops))
 
-minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
+minetest.register_node(ntop, merge(merge(hiking_pole_top, {
 	-- TODO: one should not build on top of this
 	-- TODO: should be always on top of pole_bottom
 	description = name.." (top)",
@@ -318,10 +325,10 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 			p = {x=pos.x, y=pos.y-i, z=pos.z}
 			n = minetest.env:get_node(p)
 			nn = n.name
-			if ( nn == "hiking:"..id.."_bottom" ) then
+			if ( nn == nbottom ) then
 				minetest.node_dig(p, n, digger)
 				return
-			elseif not ( nn == "hiking:"..id.."_middle" ) then
+			elseif not ( nn == nmiddle ) then
 				minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
 				return
 			end
