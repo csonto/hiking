@@ -220,6 +220,7 @@ minetest.register_node(ntop, merge(merge(hiking_pole_top, {
 			minetest.node_dig(p, n, digger)
 		else
 			minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
+			minetest.env:remove_node(pos)
 		end
 	end,
 }), moreprops))
@@ -230,6 +231,21 @@ local h = math.max(height, 2)
 local ntop = "hiking:"..id.."_top"
 local nmiddle = "hiking:"..id.."_middle"
 local nbottom = "hiking:"..id.."_bottom"
+local function rm_tall_hiking_pole(pos)
+	local i
+	local p = {x=pos.x, y=pos.y, z=pos.z}
+	local nn
+	for i = 1, h-1 do
+		nn = minetest.env:get_node(p).name
+		if ( nn == ntop or nn == nmiddle ) then
+			minetest.env:remove_node(p)
+			if ( nn == ntop ) then return end
+			p.y = p.y + 1
+		else
+			return
+		end
+	end
+end
 minetest.register_node(nbottom, merge(merge(hiking_pole_bottom, {
 	-- TODO: this should be always on ground
 	description = name.." (bottom)",
@@ -305,6 +321,7 @@ minetest.register_node(nmiddle, merge(merge(hiking_pole_middle, {
 				return
 			elseif not ( nn == nmiddle ) then
 				minetest.log('error', "WARNING: middle of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
+				rm_tall_hiking_pole({x=p.x, y=p.y+i, z=p.z})
 				return
 			end
 		end
@@ -330,6 +347,7 @@ minetest.register_node(ntop, merge(merge(hiking_pole_top, {
 				return
 			elseif not ( nn == nmiddle ) then
 				minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
+				rm_tall_hiking_pole({x=p.x, y=p.y+i, z=p.z})
 				return
 			end
 		end
