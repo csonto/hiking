@@ -210,10 +210,14 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 	description = name.." (top)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", top_face, top_face, top_face, top_face, },
 	
-	on_dig = function(pos, _, _)
+	on_dig = function(pos, _, digger)
 		local p = {x=pos.x, y=pos.y-1, z=pos.z}
-		if ( minetest.env:get_node(p).name == "hiking:"..id.."_bottom" ) then
-			minetest.env:remove_node(p)
+                local n = minetest.env:get_node(p)
+                local nn = n.name
+		if ( nn == "hiking:"..id.."_bottom" ) then
+			minetest.node_dig(p, n, digger)
+		else
+			minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
 		end
         end,
 }), moreprops))
@@ -280,17 +284,20 @@ minetest.register_node("hiking:"..id.."_middle", merge(merge(hiking_pole_middle,
 	description = name.." (middle)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", "hiking_pole_sign_bottom_.png", },
 
-	on_dig = function(pos, _, _)
+	on_dig = function(pos, _, digger)
 		local i
 		local p
+		local n
+		local nn
 		for i = 1, h-2 do
 			p = {x=pos.x, y=pos.y-i, z=pos.z}
-			local n = minetest.env:get_node(p).name
-			if ( n == "hiking:"..id.."_bottom" ) then
-				minetest.env:remove_node(p)
+                	n = minetest.env:get_node(p)
+			nn = n.name
+			if ( nn == "hiking:"..id.."_bottom" ) then
+				minetest.node_dig(p, n, digger)
 				return
-			elseif not ( n == "hiking:"..id.."_middle" ) then
-				-- TODO: ERROR!
+			elseif not ( nn == "hiking:"..id.."_middle" ) then
+				minetest.log('error', "WARNING: middle of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
 				return
 			end
 		end
@@ -302,17 +309,20 @@ minetest.register_node("hiking:"..id.."_top", merge(merge(hiking_pole_top, {
 	-- TODO: should be always on top of pole_bottom
 	description = name.." (top)",
 	tiles = {"hiking_pole_sign_cap.png", "hiking_pole_sign_cap.png", top_face, top_face, top_face, top_face, },
-	on_dig = function(pos, _, _)
+	on_dig = function(pos, _, digger)
 		local i
 		local p
+		local n
+		local nn
 		for i = 1, h-1 do
 			p = {x=pos.x, y=pos.y-i, z=pos.z}
-			local n = minetest.env:get_node(p).name
-			if ( n == "hiking:"..id.."_bottom" ) then
-				minetest.env:remove_node(p)
+                	n = minetest.env:get_node(p)
+			nn = n.name
+			if ( nn == "hiking:"..id.."_bottom" ) then
+				minetest.node_dig(p, n, digger)
 				return
-			elseif not ( n == "hiking:"..id.."_middle" ) then
-				-- TODO: ERROR!
+			elseif not ( nn == "hiking:"..id.."_middle" ) then
+				minetest.log('error', "WARNING: top of hiking pole at "..minetest.pos_to_string(pos).." found on top of '"..nn.."'? This should not happen!")
 				return
 			end
 		end
